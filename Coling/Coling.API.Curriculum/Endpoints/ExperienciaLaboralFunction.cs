@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,13 +26,14 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarExperienciaLaboral")]
+        [OpenApiOperation("InsertarExperienciaLaboral", "InsertarExperienciaLaboral", Description = "Sirve para ingresar una experiencia laboral")]
+        [OpenApiRequestBody("application/json", typeof(ExperienciaLaboral), Description = "Ingresar una nueva experiencia laboral")]
         public async Task<HttpResponseData> InsertarExperienciaLaboral(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             HttpResponseData response;
             try
             {
-
                 var experiencia = await req.ReadFromJsonAsync<ExperienciaLaboral>() ?? throw new Exception("Debe ingresar una experiencia laboral con todos sus datos");
                 experiencia.RowKey = Guid.NewGuid().ToString();
                 experiencia.Timestamp = DateTimeOffset.UtcNow;
@@ -45,6 +49,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarExperienciasLaborales")]
+        [OpenApiOperation("ListarExperienciasLaborales", "ListarExperienciasLaborales", Description = "Sirve para listar todas las experiencias laborales")]
         public async Task<HttpResponseData> ListarExperienciasLaborales(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
@@ -63,15 +68,18 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarExperienciaLaboral")]
+        [OpenApiOperation("EditarExperienciaLaboral", "EditarExperienciaLaboral", Description = "Sirve para editar una experiencia laboral")]
+        [OpenApiRequestBody("application/json", typeof(ExperienciaLaboral), Description = "Editar experiencia laboral")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la experiencia laboral", Description = "El ID de la experiencia laboral a editar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EditarExperienciaLaboral(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarExperienciaLaboral/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarExperienciaLaboral/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
                 var experiencia = await req.ReadFromJsonAsync<ExperienciaLaboral>() ?? throw new Exception("Debe ingresar una experiencia laboral con todos sus datos");
-                experiencia.RowKey = id;
+                experiencia.RowKey = rowKey;
                 bool success = await repositorio.Update(experiencia);
                 response = req.CreateResponse(success ? HttpStatusCode.OK : HttpStatusCode.BadRequest);
             }
@@ -83,6 +91,9 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarExperienciaLaboral")]
+        [OpenApiOperation("BorrarExperienciaLaboral", "BorrarExperienciaLaboral", Description = "Sirve para eliminar una experiencia laboral")]
+        [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey de la experiencia laboral", Description = "El PartitionKey de la experiencia laboral a borrar", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey de la experiencia laboral", Description = "El RowKey de la experiencia laboral a borrar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> BorrarExperienciaLaboral(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "BorrarExperienciaLaboral/{partitionKey}/{rowKey}")] HttpRequestData req,
             string partitionKey, string rowKey)
@@ -101,14 +112,16 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarExperienciaLaboralById")]
+        [OpenApiOperation("ListarExperienciaLaboralById", "ListarExperienciaLaboralById", Description = "Sirve para obtener una experiencia laboral por su ID")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la experiencia laboral", Description = "El ID de la experiencia laboral a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarExperienciaLaboralById(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarExperienciaLaboralById/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarExperienciaLaboralById/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
-                var experiencia = await repositorio.Get(id);
+                var experiencia = await repositorio.Get(rowKey);
                 response = req.CreateResponse(experiencia != null ? HttpStatusCode.OK : HttpStatusCode.NotFound);
                 if (experiencia != null)
                 {

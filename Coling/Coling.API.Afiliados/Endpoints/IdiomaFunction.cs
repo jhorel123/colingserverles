@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +26,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarIdiomas")]
+        [OpenApiOperation("ListarIdiomas", "ListarIdiomas", Description = "Lista todos los idiomas.")]
         public async Task<HttpResponseData> ListarIdiomas(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "listaridiomas")] HttpRequestData req)
         {
@@ -43,6 +47,8 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarIdioma")]
+        [OpenApiOperation("InsertarIdioma", "InsertarIdioma", Description = "Inserta un nuevo idioma.")]
+        [OpenApiRequestBody("application/json", typeof(Idioma), Description = "Datos del idioma a insertar")]
         public async Task<HttpResponseData> InsertarIdioma(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "insertaridioma")] HttpRequestData req)
         {
@@ -69,6 +75,9 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarIdioma")]
+        [OpenApiOperation("ModificarIdioma", "ModificarIdioma", Description = "Modifica un idioma existente.")]
+        [OpenApiRequestBody("application/json", typeof(Idioma), Description = "Datos del idioma a modificar")]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma", Description = "El ID del idioma a modificar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ModificarIdioma(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = "modificaridioma/{id}")] HttpRequestData req,
             int id)
@@ -96,6 +105,8 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarIdioma")]
+        [OpenApiOperation("EliminarIdioma", "EliminarIdioma", Description = "Elimina un idioma existente.")]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma", Description = "El ID del idioma a eliminar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EliminarIdioma(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "eliminaridioma/{id}")] HttpRequestData req,
             int id)
@@ -122,9 +133,11 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerIdiomaById")]
+        [OpenApiOperation("ObtenerIdiomaById", "ObtenerIdiomaById", Description = "Obtiene un idioma por su ID.")]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma", Description = "El ID del idioma a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerIdiomaById(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "obteneridiomabyid/{id}")] HttpRequestData req,
-            int id)
+     [HttpTrigger(AuthorizationLevel.Function, "get", Route = "obteneridiomabyid/{id}")] HttpRequestData req,
+     int id)
         {
             _logger.LogInformation($"Ejecutando azure function para obtener idioma con Id: {id}.");
             try
