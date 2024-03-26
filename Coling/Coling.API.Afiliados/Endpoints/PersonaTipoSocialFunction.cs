@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +26,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarPersonaTiposSocial")]
+        [OpenApiOperation("ListarPersonaTiposSocial", "ListarPersonaTiposSocial", Description = "Lista los tipos de social de las personas.")]
         public async Task<HttpResponseData> ListarPersonaTiposSocial(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "listarpersonatipossocial")] HttpRequestData req)
         {
@@ -43,6 +47,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarPersonaTipoSocial")]
+        [OpenApiOperation("InsertarPersonaTipoSocial", "InsertarPersonaTipoSocial", Description = "Inserta un nuevo tipo de social de persona.")]
         public async Task<HttpResponseData> InsertarPersonaTipoSocial(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "insertarpersonatiposocial")] HttpRequestData req)
         {
@@ -69,6 +74,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarPersonaTipoSocial")]
+        [OpenApiOperation("ModificarPersonaTipoSocial", "ModificarPersonaTipoSocial", Description = "Modifica un tipo de social de persona existente.")]
         public async Task<HttpResponseData> ModificarPersonaTipoSocial(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = "modificarpersonatiposocial/{id}")] HttpRequestData req,
             int id)
@@ -96,6 +102,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarPersonaTipoSocial")]
+        [OpenApiOperation("EliminarPersonaTipoSocial", "EliminarPersonaTipoSocial", Description = "Elimina un tipo de social de persona existente.")]
         public async Task<HttpResponseData> EliminarPersonaTipoSocial(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "eliminarpersonatiposocial/{id}")] HttpRequestData req,
             int id)
@@ -122,6 +129,8 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerPersonaTipoSocialById")]
+        [OpenApiOperation("ObtenerPersonaTipoSocialById", "ObtenerPersonaTipoSocialById", Description = "Obtiene un tipo de social de persona por su ID.")]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del tipo de social de persona", Description = "El ID del tipo de social de persona a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerPersonaTipoSocialById(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "obtenerpersonatiposocialbyid/{id}")] HttpRequestData req,
             int id)

@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,8 +26,9 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarGradoAcademico")]
-        public async Task<HttpResponseData> InsertarGradoAcademico(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
+        [OpenApiOperation("InsertarGradoAcademico", "InsertarGradoAcademico", Description = "Sirve para ingresar un grado académico")]
+        [OpenApiRequestBody("application/json", typeof(GradoAcademico), Description = "Ingresar un nuevo grado académico")]
+        public async Task<HttpResponseData> InsertarGradoAcademico([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             HttpResponseData response;
             try
@@ -43,6 +47,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarGradosAcademicos")]
+        [OpenApiOperation("ListarGradosAcademicos", "ListarGradosAcademicos", Description = "Sirve para listar todos los grados académicos")]
         public async Task<HttpResponseData> ListarGradosAcademicos(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
@@ -61,15 +66,18 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarGradoAcademico")]
+        [OpenApiOperation("EditarGradoAcademico", "EditarGradoAcademico", Description = "Sirve para editar un grado académico")]
+        [OpenApiRequestBody("application/json", typeof(GradoAcademico), Description = "Editar grado académico")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del grado académico", Description = "El ID del grado académico a editar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EditarGradoAcademico(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarGradoAcademico/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarGradoAcademico/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
                 var gradoAcademico = await req.ReadFromJsonAsync<GradoAcademico>() ?? throw new Exception("Debe ingresar un grado académico con todos sus datos");
-                gradoAcademico.RowKey = id;
+                gradoAcademico.RowKey = rowKey;
                 bool success = await repository.Update(gradoAcademico);
                 response = req.CreateResponse(success ? HttpStatusCode.OK : HttpStatusCode.BadRequest);
             }
@@ -81,6 +89,9 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarGradoAcademico")]
+        [OpenApiOperation("BorrarGradoAcademico", "BorrarGradoAcademico", Description = "Sirve para eliminar un grado académico")]
+        [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey del grado académico", Description = "El PartitionKey del grado académico a borrar", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey del grado académico", Description = "El RowKey del grado académico a borrar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> BorrarGradoAcademico(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "BorrarGradoAcademico/{partitionKey}/{rowKey}")] HttpRequestData req,
             string partitionKey, string rowKey)
@@ -99,14 +110,16 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarGradoAcademicoById")]
+        [OpenApiOperation("ListarGradoAcademicoById", "ListarGradoAcademicoById", Description = "Sirve para obtener un grado académico por su ID")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del grado académico", Description = "El ID del grado académico a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarGradoAcademicoById(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarGradoAcademicoById/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarGradoAcademicoById/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
-                var gradoAcademico = await repository.Get(id);
+                var gradoAcademico = await repository.Get(rowKey);
                 response = req.CreateResponse(gradoAcademico != null ? HttpStatusCode.OK : HttpStatusCode.NotFound);
                 if (gradoAcademico != null)
                 {

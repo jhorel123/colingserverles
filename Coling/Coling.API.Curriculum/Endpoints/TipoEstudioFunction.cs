@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +26,8 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarTipoEstudio")]
+        [OpenApiOperation("InsertarTipoEstudio", "InsertarTipoEstudio", Description = "Sirve para ingresar un tipo de estudio")]
+        [OpenApiRequestBody("application/json", typeof(TipoEstudio), Description = "Ingresar tipo de estudio nuevo")]
         public async Task<HttpResponseData> InsertarTipoEstudio(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
@@ -43,6 +48,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarTipoEstudios")]
+        [OpenApiOperation("ListarTipoEstudios", "ListarTipoEstudios", Description = "Sirve para listar todos los tipos de estudios")]
         public async Task<HttpResponseData> ListarTipoEstudios(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
@@ -61,15 +67,18 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarTipoEstudio")]
+        [OpenApiOperation("EditarTipoEstudio", "EditarTipoEstudio", Description = "Sirve para editar un tipo de estudio")]
+        [OpenApiRequestBody("application/json", typeof(TipoEstudio), Description = "Editar tipo de estudio")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del tipo de estudio", Description = "El RowKey del tipo de estudio a editar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EditarTipoEstudio(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarTipoEstudio/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarTipoEstudio/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
                 var tipoEstudio = await req.ReadFromJsonAsync<TipoEstudio>() ?? throw new Exception("Debe ingresar un tipo de estudio con todos sus datos");
-                tipoEstudio.RowKey = id;
+                tipoEstudio.RowKey = rowKey;
                 bool success = await repository.Update(tipoEstudio);
                 response = req.CreateResponse(success ? HttpStatusCode.OK : HttpStatusCode.BadRequest);
             }
@@ -81,6 +90,9 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarTipoEstudio")]
+        [OpenApiOperation("BorrarTipoEstudio", "BorrarTipoEstudio", Description = "Sirve para eliminar un tipo de estudio")]
+        [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey del tipo de estudio", Description = "El PartitionKey del tipo de estudio a borrar", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey del tipo de estudio", Description = "El RowKey del tipo de estudio a borrar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> BorrarTipoEstudio(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "BorrarTipoEstudio/{partitionKey}/{rowKey}")] HttpRequestData req,
             string partitionKey, string rowKey)
@@ -99,14 +111,16 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarTipoEstudioById")]
+        [OpenApiOperation("ListarTipoEstudioById", "ListarTipoEstudioById", Description = "Sirve para obtener un tipo de estudio por su ID")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del tipo de estudio", Description = "El RowKey del tipo de estudio a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarTipoEstudioById(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarTipoEstudioById/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarTipoEstudioById/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
-                var tipoEstudio = await repository.Get(id);
+                var tipoEstudio = await repository.Get(rowKey);
                 response = req.CreateResponse(tipoEstudio != null ? HttpStatusCode.OK : HttpStatusCode.NotFound);
                 if (tipoEstudio != null)
                 {

@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +26,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarAfiliados")]
+        [OpenApiOperation("ListarAfiliados", "ListarAfiliados", Description = "Lista todos los afiliados.")]
         public async Task<HttpResponseData> ListarAfiliados(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "listarafiliados")] HttpRequestData req)
         {
@@ -43,6 +47,8 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarAfiliado")]
+        [OpenApiOperation("InsertarAfiliado", "InsertarAfiliado", Description = "Inserta un nuevo afiliado.")]
+        [OpenApiRequestBody("application/json", typeof(Afiliado), Description = "Datos del afiliado a insertar")]
         public async Task<HttpResponseData> InsertarAfiliado(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "insertarafiliado")] HttpRequestData req)
         {
@@ -69,6 +75,9 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarAfiliado")]
+        [OpenApiOperation("ModificarAfiliado", "ModificarAfiliado", Description = "Modifica un afiliado existente.")]
+        [OpenApiRequestBody("application/json", typeof(Afiliado), Description = "Datos del afiliado a modificar")]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del afiliado", Description = "El ID del afiliado a modificar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ModificarAfiliado(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = "modificarafiliado/{id}")] HttpRequestData req,
             int id)
@@ -96,6 +105,8 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarAfiliado")]
+        [OpenApiOperation("EliminarAfiliado", "EliminarAfiliado", Description = "Elimina un afiliado existente.")]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del afiliado", Description = "El ID del afiliado a eliminar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EliminarAfiliado(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "eliminarafiliado/{id}")] HttpRequestData req,
             int id)
@@ -122,6 +133,8 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerAfiliadoById")]
+        [OpenApiOperation("ObtenerAfiliadoById", "ObtenerAfiliadoById", Description = "Obtiene un afiliado por su ID.")]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del afiliado", Description = "El ID del afiliado a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerAfiliadoById(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "obtenerafiliadobyid/{id}")] HttpRequestData req,
             int id)

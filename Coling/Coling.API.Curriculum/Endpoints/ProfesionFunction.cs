@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +26,8 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarProfesion")]
+        [OpenApiOperation("InsertarProfesion", "InsertarProfesion", Description = "Sirve para ingresar una profesión")]
+        [OpenApiRequestBody("application/json", typeof(Profesion), Description = "Ingresar profesión nueva")]
         public async Task<HttpResponseData> InsertarProfesion(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
@@ -43,6 +48,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarProfesiones")]
+        [OpenApiOperation("ListarProfesiones", "ListarProfesiones", Description = "Sirve para listar todas las profesiones")]
         public async Task<HttpResponseData> ListarProfesiones(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
@@ -61,15 +67,18 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarProfesion")]
+        [OpenApiOperation("EditarProfesion", "EditarProfesion", Description = "Sirve para editar una profesión")]
+        [OpenApiRequestBody("application/json", typeof(Profesion), Description = "Editar profesión")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la profesión", Description = "El RowKey de la profesión a editar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EditarProfesion(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarProfesion/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "EditarProfesion/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
                 var profesion = await req.ReadFromJsonAsync<Profesion>() ?? throw new Exception("Debe ingresar una profesión con todos sus datos");
-                profesion.RowKey = id;
+                profesion.RowKey = rowKey;
                 bool success = await repository.Update(profesion);
                 response = req.CreateResponse(success ? HttpStatusCode.OK : HttpStatusCode.BadRequest);
             }
@@ -81,6 +90,9 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarProfesion")]
+        [OpenApiOperation("BorrarProfesion", "BorrarProfesion", Description = "Sirve para eliminar una profesión")]
+        [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey de la profesión", Description = "El PartitionKey de la profesión a borrar", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey de la profesión", Description = "El RowKey de la profesión a borrar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> BorrarProfesion(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "BorrarProfesion/{partitionKey}/{rowKey}")] HttpRequestData req,
             string partitionKey, string rowKey)
@@ -99,14 +111,16 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarProfesionById")]
+        [OpenApiOperation("ListarProfesionById", "ListarProfesionById", Description = "Sirve para obtener una profesión por su ID")]
+        [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la profesión", Description = "El RowKey de la profesión a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarProfesionById(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarProfesionById/{id}")] HttpRequestData req,
-            string id)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ListarProfesionById/{rowKey}")] HttpRequestData req,
+            string rowKey)
         {
             HttpResponseData response;
             try
             {
-                var profesion = await repository.Get(id);
+                var profesion = await repository.Get(rowKey);
                 response = req.CreateResponse(profesion != null ? HttpStatusCode.OK : HttpStatusCode.NotFound);
                 if (profesion != null)
                 {
