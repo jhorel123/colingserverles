@@ -4,7 +4,8 @@
       "commandName": "Project",
       "commandLineArgs": "--port 7055",
       "environmentVariables": {
-        "cadenaconexion": "mongodb+srv://jhorelrolando:amordivino123@jhorel.2jjr0bt.mongodb.net/"
+        "cadenaconexion": "mongodb+srv://jhorelrolando:amordivino123@jhorel.2jjr0bt.mongodb.net/ColingBD",
+        "LlaveSecreta": "fsdnfksdjfjksdhnkj234534534534_Sdfgdfgdfg456354768*9666fdsfsddfhfghfFFDSSSDFD206"
       }
     }
   }

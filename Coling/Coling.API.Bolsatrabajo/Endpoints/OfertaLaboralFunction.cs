@@ -1,5 +1,7 @@
 using Coling.API.Bolsatrabajo.Contratos;
 using Coling.Shared;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -26,6 +28,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("InsertarOfertaLaboral")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarOfertaLaboral", "Inserta una oferta laboral", Summary = "Inserta una oferta laboral en el sistema.")]
         [OpenApiRequestBody("application/json", typeof(OfertaLaboral), Description = "Objeto de tipo OfertaLaboral que representa la oferta laboral a insertar.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "Operación exitosa", Description = "Operación de inserción exitosa.")]
@@ -47,6 +50,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("ListarOfertasLaborales")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarOfertasLaborales", "Lista todas las ofertas laborales", Summary = "Lista todas las ofertas laborales registradas en el sistema.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<OfertaLaboral>), Summary = "Operación exitosa", Description = "Operación de listado exitosa.")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.InternalServerError, Summary = "Error interno", Description = "Se produjo un error interno al procesar la solicitud.")]
@@ -66,6 +70,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("ModificarOfertaLaboral")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("ModificarOfertaLaboral", "Modifica una oferta laboral", Summary = "Modifica una oferta laboral existente en el sistema.")]
         [OpenApiRequestBody("application/json", typeof(OfertaLaboral), Description = "Objeto de tipo OfertaLaboral que representa la oferta laboral a modificar.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la oferta laboral", Description = "El ID de la oferta laboral a modificar.")]
@@ -89,6 +94,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("EliminarOfertaLaboral")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EliminarOfertaLaboral", "Elimina una oferta laboral", Summary = "Elimina una oferta laboral del sistema.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la oferta laboral", Description = "El ID de la oferta laboral a eliminar.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "Operación exitosa", Description = "Operación de eliminación exitosa.")]
@@ -110,6 +116,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("ObtenerOfertaLaboralById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ObtenerOfertaLaboralById", "Obtiene una oferta laboral por su ID", Summary = "Obtiene una oferta laboral del sistema mediante su ID.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la oferta laboral", Description = "El ID de la oferta laboral a obtener.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(OfertaLaboral), Summary = "Operación exitosa", Description = "Operación de obtención exitosa.")]

@@ -1,5 +1,7 @@
 using Coling.API.Bolsatrabajo.Contratos;
 using Coling.Shared;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -25,6 +27,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("InsertarSolicitud")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarSolicitud", "Inserta una solicitud", Summary = "Inserta una solicitud en el sistema.")]
         [OpenApiRequestBody("application/json", typeof(Solicitud), Description = "Objeto de tipo Solicitud que representa la solicitud a insertar.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "Operación exitosa", Description = "Operación de inserción exitosa.")]
@@ -46,6 +49,8 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("ListarSolicitudes")]
+
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarSolicitudes", "Lista todas las solicitudes", Summary = "Lista todas las solicitudes registradas en el sistema.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Solicitud>), Summary = "Operación exitosa", Description = "Operación de listado exitosa.")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.InternalServerError, Summary = "Error interno", Description = "Se produjo un error interno al procesar la solicitud.")]
@@ -65,6 +70,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("ModificarSolicitud")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("ModificarSolicitud", "Modifica una solicitud", Summary = "Modifica una solicitud existente en el sistema.")]
         [OpenApiRequestBody("application/json", typeof(Solicitud), Description = "Objeto de tipo Solicitud que representa la solicitud a modificar.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la solicitud", Description = "El ID de la solicitud a modificar.")]
@@ -88,6 +94,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("EliminarSolicitud")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EliminarSolicitud", "Elimina una solicitud", Summary = "Elimina una solicitud del sistema.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la solicitud", Description = "El ID de la solicitud a eliminar.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Summary = "Operación exitosa", Description = "Operación de eliminación exitosa.")]
@@ -109,6 +116,7 @@ namespace Coling.API.Bolsatrabajo.EndPoints
         }
 
         [Function("ObtenerSolicitudById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ObtenerSolicitudById", "Obtiene una solicitud por su ID", Summary = "Obtiene una solicitud del sistema mediante su ID.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la solicitud", Description = "El ID de la solicitud a obtener.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Solicitud), Summary = "Operación exitosa", Description = "Operación de obtención exitosa.")]

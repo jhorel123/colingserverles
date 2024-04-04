@@ -1,5 +1,7 @@
 using Coling.API.Afiliados.Contratos;
 using Coling.Shared;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -26,6 +28,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarTelefonosPorPersona")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarTelefonosPorPersona", "ListarTelefonosPorPersona", Description = "Lista los teléfonos asociados a una persona.")]
         [OpenApiParameter(name: "idPersona", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la persona", Description = "El ID de la persona de la cual se desean listar los teléfonos", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarTelefonosPorPersona(
@@ -49,6 +52,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarTelefono")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarTelefono", "InsertarTelefono", Description = "Inserta un nuevo teléfono.")]
         public async Task<HttpResponseData> InsertarTelefono([HttpTrigger(AuthorizationLevel.Function, "post", Route = "insertartelefono")] HttpRequestData req)
         {
@@ -75,6 +79,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarTelefono")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("ModificarTelefono", "ModificarTelefono", Description = "Modifica un teléfono existente.")]
         public async Task<HttpResponseData> ModificarTelefono(
             [HttpTrigger(AuthorizationLevel.Function, "put", Route = "modificartelefono/{id}")] HttpRequestData req,
@@ -103,6 +108,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarTelefono")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EliminarTelefono", "EliminarTelefono", Description = "Elimina un teléfono existente.")]
         public async Task<HttpResponseData> EliminarTelefono(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "eliminartelefono/{id}")] HttpRequestData req,
@@ -130,6 +136,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerTelefonoById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ObtenerTelefonoById", "ObtenerTelefonoById", Description = "Obtiene un teléfono por su ID.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del teléfono", Description = "El ID del teléfono a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerTelefonoById(

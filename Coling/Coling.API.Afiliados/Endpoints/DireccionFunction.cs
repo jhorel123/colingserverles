@@ -11,6 +11,8 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 
 namespace Coling.API.Afiliados.Endpoints
 {
@@ -26,6 +28,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarDireccionesPorPersona")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarDireccionesPorPersona", "ListarDireccionesPorPersona", Description = "Lista las direcciones de una persona por su ID.")]
         [OpenApiParameter(name: "idPersona", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la persona", Description = "El ID de la persona cuyas direcciones se van a listar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarDireccionesPorPersona(
@@ -49,6 +52,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarDireccion")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarDireccion", "InsertarDireccion", Description = "Inserta una nueva dirección.")]
         [OpenApiRequestBody("application/json", typeof(Direccion), Description = "Datos de la dirección a insertar")]
         public async Task<HttpResponseData> InsertarDireccion([HttpTrigger(AuthorizationLevel.Function, "post", Route = "insertardireccion")] HttpRequestData req)
@@ -76,6 +80,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarDireccion")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("ModificarDireccion", "ModificarDireccion", Description = "Modifica una dirección existente.")]
         [OpenApiRequestBody("application/json", typeof(Direccion), Description = "Datos de la dirección a modificar")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la dirección", Description = "El ID de la dirección a modificar", Visibility = OpenApiVisibilityType.Important)]
@@ -106,6 +111,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarDireccion")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EliminarDireccion", "EliminarDireccion", Description = "Elimina una dirección existente.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la dirección", Description = "El ID de la dirección a eliminar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EliminarDireccion(
@@ -134,6 +140,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerDireccionById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ObtenerDireccionById", "ObtenerDireccionById", Description = "Obtiene una dirección por su ID.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la dirección", Description = "El ID de la dirección a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerDireccionById(

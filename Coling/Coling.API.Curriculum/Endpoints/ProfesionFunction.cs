@@ -1,5 +1,7 @@
 using Coling.API.Curriculum.Contratos.Repositorio;
 using Coling.API.Curriculum.Modelo;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -26,6 +28,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarProfesion")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarProfesion", "InsertarProfesion", Description = "Sirve para ingresar una profesión")]
         [OpenApiRequestBody("application/json", typeof(Profesion), Description = "Ingresar profesión nueva")]
         public async Task<HttpResponseData> InsertarProfesion(
@@ -48,6 +51,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarProfesiones")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarProfesiones", "ListarProfesiones", Description = "Sirve para listar todas las profesiones")]
         public async Task<HttpResponseData> ListarProfesiones(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -67,6 +71,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarProfesion")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EditarProfesion", "EditarProfesion", Description = "Sirve para editar una profesión")]
         [OpenApiRequestBody("application/json", typeof(Profesion), Description = "Editar profesión")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la profesión", Description = "El RowKey de la profesión a editar", Visibility = OpenApiVisibilityType.Important)]
@@ -90,6 +95,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarProfesion")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("BorrarProfesion", "BorrarProfesion", Description = "Sirve para eliminar una profesión")]
         [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey de la profesión", Description = "El PartitionKey de la profesión a borrar", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey de la profesión", Description = "El RowKey de la profesión a borrar", Visibility = OpenApiVisibilityType.Important)]
@@ -111,6 +117,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarProfesionById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarProfesionById", "ListarProfesionById", Description = "Sirve para obtener una profesión por su ID")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la profesión", Description = "El RowKey de la profesión a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarProfesionById(
