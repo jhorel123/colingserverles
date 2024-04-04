@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Coling.Shared\Coling.Shared.csproj" />
+    <ProjectReference Include="..\Coling.Utilitarios\Coling.Utilitarios.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

@@ -4,7 +4,8 @@
       "commandName": "Project",
       "commandLineArgs": "--port 7110",
       "environmentVariables": {
-        "cadenaconexion": "DefaultEndpointsProtocol=https;AccountName=colingserver;AccountKey=tAmZoXV5q5syUM/aFsTfH/R74HDVuQLgGvkFmxoASDsLouV8R0B2/l9NKznkFLM3i4NR9rQ5xeAS+AStBu28ng==;EndpointSuffix=core.windows.net"
+        "cadenaconexion": "DefaultEndpointsProtocol=https;AccountName=colingserver;AccountKey=tAmZoXV5q5syUM/aFsTfH/R74HDVuQLgGvkFmxoASDsLouV8R0B2/l9NKznkFLM3i4NR9rQ5xeAS+AStBu28ng==;EndpointSuffix=core.windows.net",
+        "LlaveSecreta": "fsdnfksdjfjksdhnkj234534534534_Sdfgdfgdfg456354768*9666fdsfsddfhfghfFFDSSSDFD206"
       }
     }
   }

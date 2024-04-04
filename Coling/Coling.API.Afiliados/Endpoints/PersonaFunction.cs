@@ -11,6 +11,8 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 
 namespace Coling.API.Afiliados.Endpoints
 {
@@ -26,6 +28,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarPersonas")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarPersonas", "ListarPersonas", Description = "Lista todas las personas.")]
         public async Task<HttpResponseData> ListarPersonas([HttpTrigger(AuthorizationLevel.Function, "get", Route = "listarpersonas")] HttpRequestData req)
         {
@@ -47,6 +50,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarPersona")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarPersona", "InsertarPersona", Description = "Inserta una nueva persona.")]
         [OpenApiRequestBody("application/json", typeof(Persona), Description = "Datos de la persona a insertar")]
         public async Task<HttpResponseData> InsertarPersona([HttpTrigger(AuthorizationLevel.Function, "post", Route = "insertarpersona")] HttpRequestData req)
@@ -73,6 +77,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarPersona")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("ModificarPersona", "ModificarPersona", Description = "Modifica una persona existente.")]
         [OpenApiRequestBody("application/json", typeof(Persona), Description = "Datos de la persona a modificar")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la persona", Description = "El ID de la persona a modificar", Visibility = OpenApiVisibilityType.Important)]
@@ -103,6 +108,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarPersona")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EliminarPersona", "EliminarPersona", Description = "Elimina una persona existente.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la persona", Description = "El ID de la persona a eliminar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EliminarPersona(
@@ -131,6 +137,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerPersonaById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ObtenerPersonaById", "ObtenerPersonaById", Description = "Obtiene una persona por su ID.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID de la persona", Description = "El ID de la persona a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerPersonaById(

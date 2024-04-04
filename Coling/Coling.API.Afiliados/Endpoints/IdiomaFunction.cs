@@ -11,6 +11,8 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 
 namespace Coling.API.Afiliados.Endpoints
 {
@@ -26,6 +28,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarIdiomas")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarIdiomas", "ListarIdiomas", Description = "Lista todos los idiomas.")]
         public async Task<HttpResponseData> ListarIdiomas(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "listaridiomas")] HttpRequestData req)
@@ -47,6 +50,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarIdioma")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarIdioma", "InsertarIdioma", Description = "Inserta un nuevo idioma.")]
         [OpenApiRequestBody("application/json", typeof(Idioma), Description = "Datos del idioma a insertar")]
         public async Task<HttpResponseData> InsertarIdioma(
@@ -75,6 +79,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarIdioma")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("ModificarIdioma", "ModificarIdioma", Description = "Modifica un idioma existente.")]
         [OpenApiRequestBody("application/json", typeof(Idioma), Description = "Datos del idioma a modificar")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma", Description = "El ID del idioma a modificar", Visibility = OpenApiVisibilityType.Important)]
@@ -105,6 +110,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarIdioma")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EliminarIdioma", "EliminarIdioma", Description = "Elimina un idioma existente.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma", Description = "El ID del idioma a eliminar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EliminarIdioma(
@@ -133,6 +139,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerIdiomaById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ObtenerIdiomaById", "ObtenerIdiomaById", Description = "Obtiene un idioma por su ID.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma", Description = "El ID del idioma a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerIdiomaById(

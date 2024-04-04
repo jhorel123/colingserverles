@@ -1,5 +1,7 @@
 using Coling.API.Curriculum.Contratos.Repositorio;
 using Coling.API.Curriculum.Modelo;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -26,6 +28,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarGradoAcademico")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarGradoAcademico", "InsertarGradoAcademico", Description = "Sirve para ingresar un grado académico")]
         [OpenApiRequestBody("application/json", typeof(GradoAcademico), Description = "Ingresar un nuevo grado académico")]
         public async Task<HttpResponseData> InsertarGradoAcademico([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
@@ -47,6 +50,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarGradosAcademicos")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarGradosAcademicos", "ListarGradosAcademicos", Description = "Sirve para listar todos los grados académicos")]
         public async Task<HttpResponseData> ListarGradosAcademicos(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -66,6 +70,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarGradoAcademico")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EditarGradoAcademico", "EditarGradoAcademico", Description = "Sirve para editar un grado académico")]
         [OpenApiRequestBody("application/json", typeof(GradoAcademico), Description = "Editar grado académico")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del grado académico", Description = "El ID del grado académico a editar", Visibility = OpenApiVisibilityType.Important)]
@@ -89,6 +94,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarGradoAcademico")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("BorrarGradoAcademico", "BorrarGradoAcademico", Description = "Sirve para eliminar un grado académico")]
         [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey del grado académico", Description = "El PartitionKey del grado académico a borrar", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey del grado académico", Description = "El RowKey del grado académico a borrar", Visibility = OpenApiVisibilityType.Important)]
@@ -110,6 +116,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarGradoAcademicoById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarGradoAcademicoById", "ListarGradoAcademicoById", Description = "Sirve para obtener un grado académico por su ID")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del grado académico", Description = "El ID del grado académico a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarGradoAcademicoById(

@@ -1,5 +1,7 @@
 using Coling.API.Afiliados.Contratos;
 using Coling.Shared;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -26,6 +28,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ListarAfiliadoIdiomas")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarAfiliadoIdiomas", "ListarAfiliadoIdiomas", Description = "Lista todos los idiomas de afiliados.")]
         public async Task<HttpResponseData> ListarAfiliadoIdiomas(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "listarafiliadoidiomas")] HttpRequestData req)
@@ -47,6 +50,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("InsertarAfiliadoIdioma")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarAfiliadoIdioma", "InsertarAfiliadoIdioma", Description = "Inserta un nuevo idioma de afiliado.")]
         [OpenApiRequestBody("application/json", typeof(AfiliadoIdioma), Description = "Datos del idioma del afiliado a insertar")]
         public async Task<HttpResponseData> InsertarAfiliadoIdioma(
@@ -75,6 +79,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ModificarAfiliadoIdioma")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("ModificarAfiliadoIdioma", "ModificarAfiliadoIdioma", Description = "Modifica un idioma de afiliado existente.")]
         [OpenApiRequestBody("application/json", typeof(AfiliadoIdioma), Description = "Datos del idioma del afiliado a modificar")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma de afiliado", Description = "El ID del idioma del afiliado a modificar", Visibility = OpenApiVisibilityType.Important)]
@@ -105,6 +110,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("EliminarAfiliadoIdioma")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EliminarAfiliadoIdioma", "EliminarAfiliadoIdioma", Description = "Elimina un idioma de afiliado existente.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del idioma de afiliado", Description = "El ID del idioma de afiliado a eliminar", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> EliminarAfiliadoIdioma(
@@ -133,6 +139,7 @@ namespace Coling.API.Afiliados.Endpoints
         }
 
         [Function("ObtenerAfiliadoIdiomaById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ObtenerAfiliadoIdiomaById", "ObtenerAfiliadoIdiomaById", Description = "Obtiene un afiliado idioma por su ID.")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Summary = "ID del afiliado idioma", Description = "El ID del afiliado idioma a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ObtenerAfiliadoIdiomaById(

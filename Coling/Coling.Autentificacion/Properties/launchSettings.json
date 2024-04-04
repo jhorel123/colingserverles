@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Coling.API.Afiliados": {
+    "Coling.Autentificacion": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7161",
+      "commandLineArgs": "--port 7117",
       "environmentVariables": {
         "LlaveSecreta": "fsdnfksdjfjksdhnkj234534534534_Sdfgdfgdfg456354768*9666fdsfsddfhfghfFFDSSSDFD206"
       }

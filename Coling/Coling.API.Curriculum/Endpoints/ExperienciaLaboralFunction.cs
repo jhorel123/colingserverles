@@ -1,5 +1,7 @@
 using Coling.API.Curriculum.Contratos.Repositorio;
 using Coling.API.Curriculum.Modelo;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -26,6 +28,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarExperienciaLaboral")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarExperienciaLaboral", "InsertarExperienciaLaboral", Description = "Sirve para ingresar una experiencia laboral")]
         [OpenApiRequestBody("application/json", typeof(ExperienciaLaboral), Description = "Ingresar una nueva experiencia laboral")]
         public async Task<HttpResponseData> InsertarExperienciaLaboral(
@@ -49,6 +52,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarExperienciasLaborales")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarExperienciasLaborales", "ListarExperienciasLaborales", Description = "Sirve para listar todas las experiencias laborales")]
         public async Task<HttpResponseData> ListarExperienciasLaborales(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -68,6 +72,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarExperienciaLaboral")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EditarExperienciaLaboral", "EditarExperienciaLaboral", Description = "Sirve para editar una experiencia laboral")]
         [OpenApiRequestBody("application/json", typeof(ExperienciaLaboral), Description = "Editar experiencia laboral")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la experiencia laboral", Description = "El ID de la experiencia laboral a editar", Visibility = OpenApiVisibilityType.Important)]
@@ -91,6 +96,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarExperienciaLaboral")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("BorrarExperienciaLaboral", "BorrarExperienciaLaboral", Description = "Sirve para eliminar una experiencia laboral")]
         [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey de la experiencia laboral", Description = "El PartitionKey de la experiencia laboral a borrar", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey de la experiencia laboral", Description = "El RowKey de la experiencia laboral a borrar", Visibility = OpenApiVisibilityType.Important)]
@@ -112,6 +118,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarExperienciaLaboralById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarExperienciaLaboralById", "ListarExperienciaLaboralById", Description = "Sirve para obtener una experiencia laboral por su ID")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID de la experiencia laboral", Description = "El ID de la experiencia laboral a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarExperienciaLaboralById(

@@ -1,5 +1,7 @@
 using Coling.API.Curriculum.Contratos.Repositorio;
 using Coling.API.Curriculum.Modelo;
+using Coling.Utilitarios.Attributes;
+using Coling.Utilitarios.Roles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -26,6 +28,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("InsertarTipoEstudio")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("InsertarTipoEstudio", "InsertarTipoEstudio", Description = "Sirve para ingresar un tipo de estudio")]
         [OpenApiRequestBody("application/json", typeof(TipoEstudio), Description = "Ingresar tipo de estudio nuevo")]
         public async Task<HttpResponseData> InsertarTipoEstudio(
@@ -48,6 +51,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarTipoEstudios")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarTipoEstudios", "ListarTipoEstudios", Description = "Sirve para listar todos los tipos de estudios")]
         public async Task<HttpResponseData> ListarTipoEstudios(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -67,6 +71,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("EditarTipoEstudio")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("EditarTipoEstudio", "EditarTipoEstudio", Description = "Sirve para editar un tipo de estudio")]
         [OpenApiRequestBody("application/json", typeof(TipoEstudio), Description = "Editar tipo de estudio")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del tipo de estudio", Description = "El RowKey del tipo de estudio a editar", Visibility = OpenApiVisibilityType.Important)]
@@ -90,6 +95,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("BorrarTipoEstudio")]
+        [ColingAuthorize(AplicacionRoles.Admin)]
         [OpenApiOperation("BorrarTipoEstudio", "BorrarTipoEstudio", Description = "Sirve para eliminar un tipo de estudio")]
         [OpenApiParameter(name: "partitionKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "PartitionKey del tipo de estudio", Description = "El PartitionKey del tipo de estudio a borrar", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "RowKey del tipo de estudio", Description = "El RowKey del tipo de estudio a borrar", Visibility = OpenApiVisibilityType.Important)]
@@ -111,6 +117,7 @@ namespace Coling.API.Curriculum.EndPoints
         }
 
         [Function("ListarTipoEstudioById")]
+        [ColingAuthorize(AplicacionRoles.Admin + "," + AplicacionRoles.Secretaria + "," + AplicacionRoles.Afiliado)]
         [OpenApiOperation("ListarTipoEstudioById", "ListarTipoEstudioById", Description = "Sirve para obtener un tipo de estudio por su ID")]
         [OpenApiParameter(name: "rowKey", In = ParameterLocation.Path, Required = true, Type = typeof(string), Summary = "ID del tipo de estudio", Description = "El RowKey del tipo de estudio a obtener", Visibility = OpenApiVisibilityType.Important)]
         public async Task<HttpResponseData> ListarTipoEstudioById(
