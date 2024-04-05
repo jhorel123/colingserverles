@@ -1,0 +1,82 @@
+﻿@page "/instituciones"
+@inject IInstitucionService servicioInstitucion
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+<h3>Listar Instituciones</h3>
+
+<div class="form-group row">
+    <div class="col-sm-10">
+        <a href="/institucion/crear" class="btn btn-primary m-1">Agregar Nuevo</a>
+    </div>
+</div>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><strong>Nombre Institucion</strong></th>
+                <th><strong>Tipo</strong></th>
+                <th><strong>Direccion</strong></th>
+                <th><strong>Estado</strong></th>
+                <th><strong>PartitionKey</strong></th>
+                <th><strong>RowKey</strong></th>
+                <th><strong>Timestamp</strong></th>
+                <th><strong>ETag</strong></th>
+                <th><strong>Acciones</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in InstitucionesLista)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td>@item.Tipo</td>
+                    <td>@item.Direccion</td>
+                    <td>@item.Estado</td>
+                    <td>@item.PartitionKey</td>
+                    <td>@item.RowKey</td>
+                    <td>@item.Timestamp</td>
+                    <td>@item.ETag</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="()=>EditarInstitucion(item.RowKey)">Editar</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => BorrarInstitucion(item.PartitionKey, item.RowKey)">Borrar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    public List<Institucion> InstitucionesLista { get; set; } = new List<Institucion>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiamhvcmVsIiwicm9sIjoiQWRtaW4iLCJlc3RhZG8iOiJBY3Rpdm8iLCJleHAiOjE3MTM1NDExMjF9.Oex-7iJHkxGlytRiGbxdbvZXMA91dDqvw4eMa_8kxnc";
+        var respuesta = await servicioInstitucion.ListaInstituciones(token);
+        InstitucionesLista = respuesta;
+    }
+
+    private void EditarInstitucion(string rowKey)
+    {
+        nav.NavigateTo($"/institucion/editar/{rowKey}");
+    }
+
+    private async Task BorrarInstitucion(string partitionKey, string rowKey)
+    {
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoibWFyY28iLCJyb2wiOiJBZG1pbiIsImVzdGFkbyI6IkFjdGl2byIsImV4cCI6MTcxNDY5ODU1N30.MXG3tCUNsze-FNZo_E-2D7SJpOLPCclRbNvnbU1P4iY"; // Obtén el token de autenticación de alguna manera
+        var exito = await servicioInstitucion.BorrarInstitucion(partitionKey, rowKey, token);
+
+        if (exito)
+        {
+            nav.NavigateTo("/instituciones", forceLoad: true);
+        }
+        else
+        {
+            await sweetAlertService.FireAsync("Error", "No se pudo borrar la institución", SweetAlertIcon.Error);
+        }
+    }
+}

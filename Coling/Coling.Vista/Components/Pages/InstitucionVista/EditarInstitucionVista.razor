@@ -1,0 +1,91 @@
+﻿@page "/institucion/editar/{rowKey}"
+@inject IInstitucionService servicioInstitucion
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar Institución</h3>
+
+@if (institucion != null)
+{
+    <EditForm EditContext="contextoEdicion" OnValidSubmit="Editar">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label>Nombre:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@institucion.Nombre" />
+                <ValidationMessage For="@(() => institucion.Nombre)" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Tipo:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@institucion.Tipo" />
+                <ValidationMessage For="@(() => institucion.Tipo)" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Dirección:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@institucion.Direccion" />
+                <ValidationMessage For="@(() => institucion.Direccion)" />
+            </div>
+        </div>
+        <div class="mb-3">
+            <label>Estado:</label>
+            <div>
+                <select class="form-control" @bind="@institucion.Estado">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Editar</button>
+        <button class="btn btn-primary" @onclick="Cancelar">Cancelar</button>
+    </EditForm>
+}
+else
+{
+    <p>Cargando...</p>
+}
+
+@code {
+    private EditContext contextoEdicion;
+    private Institucion institucion;
+
+    [Parameter]
+    public string rowKey { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiamhvcmVsIiwicm9sIjoiQWRtaW4iLCJlc3RhZG8iOiJBY3Rpdm8iLCJleHAiOjE3MTM1NDExMjF9.Oex-7iJHkxGlytRiGbxdbvZXMA91dDqvw4eMa_8kxnc";
+        institucion = await servicioInstitucion.ObtenerInstitucionPorRowKey(rowKey, token);
+
+        if (institucion != null)
+        {
+            contextoEdicion = new EditContext(institucion);
+        }
+    }
+
+    private async Task Editar()
+    {
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiamhvcmVsIiwicm9sIjoiQWRtaW4iLCJlc3RhZG8iOiJBY3Rpdm8iLCJleHAiOjE3MTM1NDExMjF9.Oex-7iJHkxGlytRiGbxdbvZXMA91dDqvw4eMa_8kxnc";
+        bool exito = await servicioInstitucion.EditarInstitucion(institucion, token);
+
+        if (exito)
+        {
+            nav.NavigateTo("/instituciones");
+        }
+        else
+        {
+            await sweetAlertService.FireAsync("Error", "No se pudo editar la institución", SweetAlertIcon.Error);
+        }
+    }
+
+    private void Cancelar()
+    {
+        nav.NavigateTo("/instituciones");
+    }
+}

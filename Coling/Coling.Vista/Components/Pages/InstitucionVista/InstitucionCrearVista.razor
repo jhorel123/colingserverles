@@ -1,0 +1,33 @@
+﻿@page "/institucion/crear"
+@inject IInstitucionService servicioInstitucion
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+<h3>Crear Institucion</h3>
+
+<InstitucionFormularioVista @ref="insForm" institucion="institucion" OnValidSubmit="Crear" Cancelar="Navegar"></InstitucionFormularioVista>
+
+@code {
+    private Institucion institucion = new();
+    private InstitucionFormularioVista? insForm;
+
+    private async Task Crear()
+    {
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiamhvcmVsIiwicm9sIjoiQWRtaW4iLCJlc3RhZG8iOiJBY3Rpdm8iLCJleHAiOjE3MTM1NDExMjF9.Oex-7iJHkxGlytRiGbxdbvZXMA91dDqvw4eMa_8kxnc";
+        institucion.PartitionKey = "Educacion";
+        institucion.Estado = "Activo";
+        var respuesta = await servicioInstitucion.InsertarInstitucion(institucion, token);
+        if (!respuesta)
+        {
+            await sweetAlertService.FireAsync("Error", "No se pudo guardar", SweetAlertIcon.Error);
+            return;
+        }
+        Navegar();
+    }
+
+    private void Navegar()
+    {
+        insForm!.formularioPostOk = true;
+        nav.NavigateTo("/instituciones", forceLoad: true);
+    }
+}
