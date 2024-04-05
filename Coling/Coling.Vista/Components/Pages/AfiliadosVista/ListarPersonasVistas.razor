@@ -1,0 +1,36 @@
+﻿@page "/personas"
+@using Coling.Shared
+@using Coling.Vista.Servicios.Afiliados
+
+@inject IPersonaService servicioInstitucion
+
+<h3>Listar Personas</h3>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><strong>Nombre </strong></th>
+                <th><strong>Apellidos</strong></th>
+            </tr>
+        </thead>
+        @foreach (var item in Personas)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Apellidos</td>
+            </tr>
+        }
+    </table>
+</div>
+
+@code {
+    public List<Persona> Personas { get; set; } = new List<Persona>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicioInstitucion.ListaPersonas();
+        Personas = respuesta;
+    }
+
+}
